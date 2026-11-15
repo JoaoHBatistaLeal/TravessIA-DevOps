@@ -1,90 +1,111 @@
-# TravessIA - Semaforo Inteligente e Mobilidade Urbana Inclusiva (CitizenTech GS 2026/2)
+# TravessIA API — DevOps Tools & Cloud Computing
 
-## 1. Visao Geral da Solucao e Impacto CitizenTech
-
-O **TravessIA** e uma plataforma CitizenTech de mobilidade urbana inclusiva e seguranca viaria preditiva projetada para proteger cidadaos com mobilidade reduzida, idosos, cadeirantes e pessoas com deficiencia visual em travessias de pedestres.
-
-Nos grandes centros urbanos, o tempo de fase verde para pedestres nos semaforos tradicionais e calculado com base na velocidade media de deslocamento de um adulto sem restricoes fisicas (1,2 m/s) sob condicoes climaticas ideais. Quando ocorrem chuvas moderadas ou tempestades, ou quando um idoso ou pessoa com deficiencia realiza a travessia em avenidas largas, esse tempo fixo torna-se insuficiente, elevando o risco de atropelamentos e quedas.
-
-O **TravessIA** integra sensores fisicos de proximidade na calcada (Beacons BLE/IoT), perfis de mobilidade do cidadao (mediante consentimento expresso da LGPD) e telemetria meteorologica regional em tempo real (`SECO`, `CHUVA_MODERADA`, `TEMPESTADE`) para calcular dinamicamente e conceder segundos extras de travessia segura, registrando justificativas estruturadas de Inteligencia Artificial e trilha completa de auditoria para os gestores municipais de transito.
-
-### Alinhamento aos Objetivos de Desenvolvimento Sustentavel da ONU (ODS)
-- **ODS 3 (Saude e Bem-Estar - Meta 3.6)**: Reducao de acidentes de transito, quedas em pista molhada e atropelamentos de pedestres vulneraveis nas travessias urbanas.
-- **ODS 9 (Industria, Inovacao e Infraestrutura - Meta 9.1)**: Modernizacao da infraestrutura viaria publica com sensores IoT, APIs resilientes em nuvem e automacao DevSecOps.
-- **ODS 10 (Reducao das Desigualdades - Meta 10.2)**: Inclusao social e autonomia de locomocao urbana para idosos, cadeirantes e pessoas com deficiencia visual ou mobilidade reduzida.
-- **ODS 11 (Cidades e Comunidades Sustentaveis - Meta 11.2)**: Sistemas de transporte e travessia seguros, acessiveis e sustentaveis com foco em grupos em situacao de vulnerabilidade.
-- **ODS 13 (Acao Contra a Mudanca Global do Clima - Meta 13.1)**: Adaptacao ativa da infraestrutura semaforica a eventos climaticos extremos, chuvas intensas e alagamentos urbanos.
+**Disciplina:** DevOps Tools & Cloud Computing — Global Solution 2026/2 
 
 ---
 
-## 2. Integrantes do Grupo (2TDSPG - FIAP)
+## 1. Integrantes do Grupo
 
-| Nome Completo | RM | Turma |
+Joao Henrique Batista Leal - RM 564361
+Erik Naoki Miyasato - RM 565771 
+Juliana da Silva Stigliani - RM 561171 
+Gutemberg Rocha Silva - RM 562267 
+Gustavo Arthur Carvalho Sartori - RM 561650 
+
+
+## 2. Links Oficiais da Entrega (Nuvem, Swagger, Health Check, Azure DevOps, GitHub e YouTube)
+
+| Recurso | URL / Identificacao Oficial |
+|---|---|
+| **URL Base (Azure Web App)** | `https://webapp-travessia-rm564361.azurewebsites.net` |
+| **Swagger UI (Producao)** | `https://webapp-travessia-rm564361.azurewebsites.net/swagger/index.html` |
+| **Health Check 3 Camadas (`/health`)** | `https://webapp-travessia-rm564361.azurewebsites.net/health` |
+| **Projeto no Azure DevOps** | `https://dev.azure.com/OrgJJEGG/TravessIA`|
+| **Repositorio GitHub (Entrega DevOps - Branch `master`)** | `https://github.com/JoaoHBatistaLeal/TravessIA-DevOps` |
+| **Repositorio GitHub (Codigo Fonte .NET - Branch `main`)** | `https://github.com/JoaoHBatistaLeal/TravessIA` |
+| **Video de Demonstracao (YouTube)** | `https://youtu.be/<url>` |
+
+---
+
+## 3. Descricao da Solucao CitizenTech (TravessIA) e Beneficios para o Negocio
+
+O **TravessIA** é uma plataforma de semaforos inteligentes e mobilidade urbana inclusiva projetada para aumentar a seguranca de pedestres vulneraveis em travessias urbanas. Nos semaforos convencionais, o tempo fixo de fase verde para pedestres considera apenas a marcha padrao de um adulto sem restricoes em pista seca, elevando o risco de acidentes e quedas para idosos, cadeirantes ou cidadaos com mobilidade reduzida, especialmente em avenidas largas e sob chuva ou tempestade.
+
+A API em nuvem integra sensores fisicos de proximidade instalados na calcada (Beacons BLE/IoT) que validam e liberam solicitacoes de travessia exclusivamente dentro do raio seguro de **`0.1m` a `5.0m`** (`MinSensorDistanceMeters = 0.1m`, `MaxSensorDistanceMeters = 5.0m`), calculando dinamicamente a extensao do tempo verde de acordo com:
+- **Perfis de mobilidade prioritaria**: `PADRAO` (0s seco / 4s chuva), `IDOSO` (6s seco / 12s chuva), `CADEIRANTE` (8s seco / 15s chuva) e `MOBILIDADE_REDUZIDA` (5s seco / 10s chuva).
+- **Telemetria climatica em tempo real**: diferencia condicao `SECO` de `CHUVA_MODERADA` e `TEMPESTADE` (aplicando bonus de seguranca `+5s` em `TEMPESTADE` ou chuva acima de `20mm`).
+- **Geometria viaria (`largura_via_m`)**: acrescenta segundos proporcionais a largura da avenida atravessada.
+- **Conformidade LGPD (`consentimento_lgpd = 'S'`)**: bloqueia acionamentos sem consentimento expresso do usuario e registra justificativa explicavel (`justificativa_ia`) para transparencia operacional.
+
+### Beneficios Diretos de DevOps, DevSecOps e Cloud Computing
+- **Entrega Continua na Branch `master` (`azure-pipeline.yml`)**: Cada Pull Request aprovado e mesclado na branch protegida `master` do Azure Repos (`TravessIA`) dispara automaticamente o pipeline multiestagio (`Build` e `Release`), eliminando deploys manuais suscetiveis a erro humano.
+- **Quality Gate Automatizado com 35 Testes xUnit**: O estagio de CI executa os **35 testes automatizados** (`27` unitarios de dominio + `8` de integracao end-to-end) com publicacao de relatorio TRX (`PublishTestResults@2`) e cobertura, impedindo que qualquer regressao chegue ao ambiente de producao.
+- **Seguranca DevSecOps Zero-Secrets com Key Vault e Managed Identity**: Nenhuma string de conexao SQL ou chave JWT e armazenada em codigo-fonte ou `appsettings.json`. Em runtime, o `webapp-travessia-rm564361` autentica-se no **Azure Key Vault (`kv-travessia-564361`)** via **System-Assigned Managed Identity** e `DefaultAzureCredential` sob politica RBAC `Key Vault Secrets User`.
+- **Otimizacao de Custos em Nuvem (SKU `F1` Free Linux)**: Provisionamento padronizado via Azure CLI (`/scripts/provision-azure.sh`) no plano `plan-travessia-free` (`F1` Free Tier Linux em `brazilsouth`), viabilizando operacao continua em nuvem com custo zero de computacao web e alta reprodutibilidade de infraestrutura como codigo (IaC).
+
+---
+
+## 4. Stack Tecnologica
+
+| Camada / Componente | Tecnologia / Servico | Especificacao no Projeto TravessIA |
 |---|---|---|
-| Joao Henrique Batista Leal | RM564361 | 2TDSPG |
-| Erik Naoki Miyasato | RM565771 | 2TDSPG |
-| Juliana da Silva Stigliani | RM561171 | 2TDSPG |
-| Gutemberg Rocha Silva | RM562267 | 2TDSPG |
-| Gustavo Arthur Carvalho Sartori | RM561650 | 2TDSPG |
+| **Plataforma & API** | `.NET 10.0 SDK` (`net10.0`) | Minimal APIs ASP.NET Core, Clean Architecture, EF Core `9.0.14`, Swagger/Swashbuckle `7.2.0` |
+| **Testes Automatizados** | `xUnit 2.9` (`2.9.3`) | `TravessIA.Tests` com 35 testes (`27` Unitarios + `8` Integracao via `WebApplicationFactory<Program>`) |
+| **Computacao Web (PaaS)** | `Azure App Service Linux` | Web App `webapp-travessia-rm564361` no App Service Plan `plan-travessia-free` (SKU `F1`, `brazilsouth`) |
+| **Banco de Dados (PaaS)** | `Azure SQL Database PaaS` | Servidor logico `sql-travessia-rm564361.database.windows.net` / Banco `sqldb-travessia` (`Basic`, 5 DTUs, 2 GB) |
+| **Cofre de Segredos (DevSecOps)** | `Azure Key Vault` | `kv-travessia-564361` (`Standard`, RBAC ativado, `https://kv-travessia-564361.vault.azure.net/`) |
+| **Esteira CI/CD** | `Azure Pipelines` | Definida em `azure-pipeline.yml` executando no Pool `Default` com gatilho na branch `master` |
+| **Controle de Versao & Governanca** | `GitHub + Azure Repos` | Branch `master` protegida no Azure Repos com Branch Policies e Work Item Linking (`TravessIA-DevOps`); codigo `.NET` em `main` (`TravessIA`) |
+| **Autenticacao Azure CI/CD** | `Service Connection` | `azure-rm-travessia` via Workload Identity Federation com papel `Contributor` em `rg-travessia-gs2026` |
+| **Infraestrutura como Codigo (IaC)** | `Azure CLI` | Script idempotente `/scripts/provision-azure.sh` + DDL/Seed `/scripts/script-bd.sql` |
+| **Conteinerizacao** | `Docker` | Multi-stage build Linux non-root em `/dockerfiles/Dockerfile` (`aspnet:10.0` / `sdk:10.0`, porta `8080`) |
 
 ---
 
-## 3. Arquitetura Macro da Solucao (Cloud Azure, Key Vault e CI/CD)
+## 5. Diagrama da Arquitetura e Fluxo CI/CD Numerado
 
-![Arquitetura Macro da Solucao - TravessIA](docs/arquitetura-travessia.png)
+![Diagrama de Arquitetura e Fluxo CI/CD](docs/arquitetura-travessia.png)
 
-### Componentes de Infraestrutura Provisionados na Nuvem (Azure)
-- **Assinatura Azure**: `Azure for Students - FIAP 2TDSPG (RM564361)`
-- **Resource Group**: `rg-travessia-gs2026` (`brazilsouth`)
-- **App Service Plan**: `plan-travessia-free` (`F1` Free Tier, Linux)
-- **Azure Web App**: `webapp-travessia-rm564361` (`https://webapp-travessia-rm564361.azurewebsites.net`) com **System-Assigned Managed Identity**
-- **Azure Key Vault**: `kv-travessia-564361` (`https://kv-travessia-564361.vault.azure.net/`) armazenando os segredos `ConnectionStrings--DefaultConnection` e `JwtSettings--SecretKey` lidos em tempo de execucao via `DefaultAzureCredential`
-- **Azure SQL Server & Database**: `sql-travessia-rm564361.database.windows.net` / `sqldb-travessia` populado via `/scripts/script-bd.sql`
-- **Azure DevOps Organization & Project**: `https://dev.azure.com/OrgJJEGG/TravessIA` (Processo `Scrum`, Azure Boards `Sprint 1`, Pipeline `TravessIA-CI-CD` via `/azure-pipeline.yml`)
-- **URLs Publicas em Producao**:
-  - **Swagger UI (Producao)**: `https://webapp-travessia-rm564361.azurewebsites.net/swagger`
-  - **OpenAPI JSON**: `https://webapp-travessia-rm564361.azurewebsites.net/swagger/v1/swagger.json`
-  - **Health Check (`/health`)**: `https://webapp-travessia-rm564361.azurewebsites.net/health`
-
----
-
-## 4. Modelagem Relacional de Dados (5 Tabelas ERD e `/scripts/script-bd.sql`)
-
-O banco de dados relacional implementa fielmente as 5 tabelas do diagrama entidade-relacionamento no script `/scripts/script-bd.sql` e no mapeamento Fluent API do Entity Framework Core (`TravessIA.Infrastructure`):
-
-1. **`TB_PERFIL_MOBILIDADE`**: Cadastro de perfis de mobilidade (`id_perfil` PK `UNIQUEIDENTIFIER` / `Guid`, `codigo` UK, `descricao`, `seg_extra_seco`, `seg_extra_chuva`) com carga inicial deterministica para `PADRAO` (`11111111-1111-1111-1111-111111111101`), `IDOSO` (`11111111-1111-1111-1111-111111111102`), `CADEIRANTE` (`11111111-1111-1111-1111-111111111103`), `DEFICIENCIA_VISUAL` (`11111111-1111-1111-1111-111111111104`) e `MOBILIDADE_REDUZIDA` (`11111111-1111-1111-1111-111111111105`).
-2. **`TB_USUARIO`**: Cadastro de cidadaos e gestores (`id_usuario` PK `UNIQUEIDENTIFIER` / `Guid`, `id_perfil` FK `UNIQUEIDENTIFIER` / `Guid`, `nome`, `email` UK, `senha_hash` BCrypt, `role` `CIDADAO`/`GESTOR`, `ano_nascimento`, `consentimento_lgpd` `'S'`/`'N'`, `dt_cadastro`).
-3. **`TB_SEMAFORO`**: Cadastro de cruzamentos semaforicos monitorados por beacons (`id_semaforo` PK `UNIQUEIDENTIFIER` / `Guid`, `codigo_beacon` UK, `endereco`, `latitude`, `longitude`, `largura_via_m`, `tempo_base_seg`, `status_operacional` `ATIVO`/`MANUTENCAO`/`MODO_CHUVA`) com carga inicial deterministica para `BEACON-SP-001` (`22222222-2222-2222-2222-222222222201`), `BEACON-SP-002` (`22222222-2222-2222-2222-222222222202`) e `BEACON-SP-003` (`22222222-2222-2222-2222-222222222203`).
-4. **`TB_ACIONAMENTO`**: Registro de acionamentos de travessia inteligente (`id_acionamento` PK `UNIQUEIDENTIFIER` / `Guid`, `id_usuario` FK `UNIQUEIDENTIFIER` / `Guid`, `id_semaforo` FK `UNIQUEIDENTIFIER` / `Guid`, `chave_idempotencia` UK, `dt_hora`, `distancia_sensor_m`, `condicao_clima` `SECO`/`CHUVA_MODERADA`/`TEMPESTADE`, `intensidade_chuva_mm`, `tempo_extra_seg`, `justificativa_ia`).
-5. **`TB_AUDITORIA_SEMAFORO`**: Tabela de auditoria automatica sem restricao de chave estrangeira (`registra (sem FK)`) para preservar o historico mesmo apos delecao de semaforos (`id_auditoria` PK `UNIQUEIDENTIFIER` / `Guid`, `id_semaforo` `UNIQUEIDENTIFIER` / `Guid`, `operacao` `INSERT`/`UPDATE`/`DELETE`, `campo_alterado`, `valor_antigo`, `valor_novo`, `usuario_bd`, `dt_operacao`).
+| Passo | Etapa do Fluxo | Descricao Tecnica da Execucao |
+|---|---|---|
+| **1** | **Commit Local & Worktrees** | Desenvolvedor implementa evolucoes na Clean Architecture (`.NET 10.0`), valida testes locais e vincula commits/branches aos Work Items do Azure Boards (Scrum). |
+| **2** | **Dual-Push Sincronizado na branch `master`** | Alteracoes de entrega DevOps sao enviadas para a branch protegida `master` no Azure Repos (`TravessIA`) e no GitHub (`TravessIA-DevOps`), mantendo o codigo `.NET` sincronizado no GitHub (`origin`, branch `main`). |
+| **3** | **Gatilho CI `azure-pipeline.yml` na `master`** | O merge de Pull Request aprovado (com Branch Policies e Work Item vinculado) na branch `master` aciona automaticamente o Stage 1 (`Build`) do pipeline `TravessIA-CI-CD`. |
+| **4** | **Build .NET 10 & 35 Testes xUnit TRX** | O agente no Pool `Default` instala o SDK `.NET 10.0.x` (`UseDotNet@2`), restaura pacotes, compila em `Release`, executa os 35 testes `xUnit` (27 Unit + 8 Integration) e publica resultados TRX + cobertura. |
+| **5** | **Publicacao Artefato `drop.zip`** | A etapa `DotNetCoreCLI@2` publica `TravessIA.API` como bundle `linux-x64` self-contained em `.zip` e registra o artefato imutavel `drop` via `PublishBuildArtifacts@1`. |
+| **6** | **Service Connection & Azure Key Vault** | A Service Connection `azure-rm-travessia` (Workload Identity Federation) autoriza o deploy no Resource Group `rg-travessia-gs2026`, enquanto o Web App le segredos do `kv-travessia-564361` via Managed Identity. |
+| **7** | **Gatilho CD Stage Release** | Apos a conclusao com sucesso do Stage `Build`, o Stage `Release` (`dependsOn: Build`) baixa o artefato `drop` via `DownloadBuildArtifacts@1`. |
+| **8** | **Deploy Azure App Service Linux `F1`** | A task `AzureWebApp@1` realiza o ZipDeploy no `webapp-travessia-rm564361` (`plan-travessia-free`), injetando `-KEYVAULT_URI` e `-ASPNETCORE_ENVIRONMENT Production` nas App Settings. |
+| **9** | **Persistencia PaaS EF Core 9 no Azure SQL** | A API em producao conecta-se via TLS/TCP 1433 ao Azure SQL (`sql-travessia-rm564361.database.windows.net` / `sqldb-travessia`) usando EF Core 9 e a connection string obtida do Key Vault. |
+| **10** | **Consumo HTTPS Swagger/Health/CRUD** | Cidadaos, gestores e avaliadores consomem os endpoints HTTPS (`/swagger/index.html`, `/health`, `/api/v1/*`) com autenticacao Bearer JWT, idempotencia (`Idempotency-Key`) e Rate Limiting (`HTTP 429`). |
+| **11** | **Auditoria Direta no Banco via `SELECT` SQL** | Validacao direta da persistencia em nuvem por meio de consultas `SELECT` no Azure SQL Database comprovando registros `INSERT`, `UPDATE`, `DELETE` e trilha de auditoria. |
 
 ---
 
-## 5. Requisitos Tecnicos .NET 10 e DevSecOps Implementados
+## 6. Estrutura do Banco de Dados em Nuvem (`script-bd.sql`), Queries `SELECT` e Payloads JSON CRUD
 
-1. **ASP.NET Core Minimal APIs + EF Core**:
-   - Grupos de rotas versionados em `/api/v1/auth`, `/api/v1/perfis-mobilidade`, `/api/v1/usuarios`, `/api/v1/semaforos`, `/api/v1/acionamentos` e `/api/v1/auditorias`.
-   - Regras de negocio de travessia inteligente (`POST /api/v1/acionamentos`): validacao de consentimento LGPD (`consentimento_lgpd == 'S'`), trava fisica de proximidade do sensor (`0.1m <= distancia_sensor_m <= 5.0m`), calculo adaptativo seco vs. chuva (`seg_extra_seco` vs. `seg_extra_chuva`), fator de largura da via (`largura_via_m`), bonus de seguranca para tempestade e geracao da explicacao em `justificativa_ia`.
-2. **Documentacao OpenAPI / Swagger Fluente**:
-   - Todos os endpoints sao documentados via metodos de extensao fluentes (`.WithName()`, `.WithTags()`, `.WithSummary()`, `.WithDescription()`, `.Accepts<T>()`, `.Produces<T>()`, `.ProducesProblem()`) e atributos `[Description]` nos DTOs, com suporte a autenticacao Bearer JWT na interface do Swagger em `Development` e `Production`.
-3. **Autenticacao JWT e Autorizacao por Roles (`CIDADAO` e `GESTOR`)**:
-   - Emissao de tokens JWT assinados com HMAC-SHA256 em `/api/v1/auth/login` e `/api/v1/auth/register`, protegendo operacoes administrativas com a politica `GestorOnly` (`GESTOR`) e operacoes de travessia com `CidadaoOrGestor`.
-4. **Idempotencia (`Idempotency-Key`)**:
-   - O endpoint `POST /api/v1/acionamentos` exige o cabecalho `Idempotency-Key` (ou `chaveIdempotencia`). Requisicoes repetidas com a mesma chave retornam o registro original com `HTTP 200 OK` e cabecalho `X-Idempotent-Replayed: true`, evitando acionamentos duplicados quando o pedestre pressiona o botao repetidamente.
-5. **Rate Limiting com HTTP 429 (`ProblemDetails`)**:
-   - Middleware `FixedWindowLimiter` configurado para retornar `HTTP 429 Too Many Requests` no padrao RFC 7807 `ProblemDetails` com cabecalho `Retry-After` quando a cota de requisicoes por janela e excedida.
-6. **Health Checks (`/health`)**:
-   - Endpoint `/health` monitorando as 3 dimensoes exigidas: `"api-self"` (disponibilidade do runtime da Minimal API), `"database"` (conectividade com o banco de dados via `TravessIAContext`) e `"external-weather-and-keyvault"` (motor de calculo meteorologico/IA e configuracao do provedor Azure Key Vault).
-7. **Suite de Testes Unitarios e de Integracao (`xUnit.net`)**:
-   - Projeto `TravessIA.Tests` com 35 testes automatizados (`27` testes unitarios de dominio + `8` testes de integracao com `WebApplicationFactory<Program>`), validando calculo seco vs. molhado, trava de distancia 0.1m-5.0m, consentimento LGPD, CRUD completo, auditoria automatica, JWT `401`/`403`, replay de idempotencia, Rate Limiting `429` e `/health`.
+O esquema relacional provisionado em `sqldb-travessia` por meio de `/scripts/script-bd.sql` utiliza chaves primarias `UNIQUEIDENTIFIER` (`Guid` com `DEFAULT NEWID()`) em todas as **5 tabelas**, garantindo unicidade distribuida sem colisoes:
 
----
+1. **`dbo.TB_PERFIL_MOBILIDADE`**: Armazena os perfis prioritarios (`id_perfil` PK `UNIQUEIDENTIFIER`, `codigo` UK `VARCHAR(30)`, `descricao`, `seg_extra_seco`, `seg_extra_chuva`), com carga inicial deterministica para `PADRAO`, `IDOSO`, `CADEIRANTE`, `DEFICIENCIA_VISUAL` e `MOBILIDADE_REDUZIDA`.
+2. **`dbo.TB_USUARIO`**: Armazena cidadaos e gestores (`id_usuario` PK `UNIQUEIDENTIFIER`, `id_perfil` FK para `TB_PERFIL_MOBILIDADE`, `nome`, `email` UK, `senha_hash` BCrypt, `role` `CIDADAO`/`GESTOR`, `ano_nascimento`, `consentimento_lgpd` `'S'`/`'N'`, `dt_cadastro`).
+3. **`dbo.TB_SEMAFORO`**: Armazena os cruzamentos equipados com beacons IoT (`id_semaforo` PK `UNIQUEIDENTIFIER`, `codigo_beacon` UK, `endereco`, `latitude`, `longitude`, `largura_via_m`, `tempo_base_seg`, `status_operacional` `ATIVO`/`MANUTENCAO`/`MODO_CHUVA`), com carga inicial para `BEACON-SP-001`, `BEACON-SP-002` e `BEACON-SP-003`.
+4. **`dbo.TB_ACIONAMENTO`**: Persiste cada requisicao inteligente de travessia (`id_acionamento` PK `UNIQUEIDENTIFIER`, `id_usuario` FK, `id_semaforo` FK, `chave_idempotencia` UK `VARCHAR(100)`, `dt_hora`, `distancia_sensor_m`, `condicao_clima`, `intensidade_chuva_mm`, `tempo_extra_seg`, `justificativa_ia`).
+5. **`dbo.TB_AUDITORIA_SEMAFORO`**: Trilha imutavel de auditoria (`id_auditoria` PK `UNIQUEIDENTIFIER`, `id_semaforo` `UNIQUEIDENTIFIER`, `operacao` `INSERT`/`UPDATE`/`DELETE`, `campo_alterado`, `valor_antigo`, `valor_novo`, `usuario_bd`, `dt_operacao`). A coluna `id_semaforo` **registra sem FK** (`registra sem FK`), preservando integralmente o historico de operacoes `INSERT`, `UPDATE` e `DELETE` mesmo apos a exclusao fisica de um semaforo em `TB_SEMAFORO`.
 
-## 6. Exemplos Completos de Payloads JSON para Testes CRUD
+### Queries `SELECT` para Comprovacao de Persistencia em Nuvem (Video DevOps)
 
-### 6.1. Autenticacao (`POST /api/v1/auth/register` e `POST /api/v1/auth/login`)
+```sql
+SELECT * FROM TB_PERFIL_MOBILIDADE;
+SELECT * FROM TB_SEMAFORO;
+SELECT * FROM TB_ACIONAMENTO;
+SELECT * FROM TB_AUDITORIA_SEMAFORO;
+```
 
-#### Request (`POST /api/v1/auth/login`)
+### Payloads JSON CRUD Completos (Sem Informar GUIDs Manuais no Corpo da Requisicao)
+
+#### 6.1. Autenticacao Previas (`POST /api/v1/auth/login`)
+
+**Request Body:**
 ```json
 {
   "email": "gestor@travessia.com.br",
@@ -92,33 +113,82 @@ O banco de dados relacional implementa fielmente as 5 tabelas do diagrama entida
 }
 ```
 
-#### Response (`200 OK`)
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresAtUtc": "2026-11-11T20:56:41Z",
-  "idUsuario": "33333333-3333-3333-3333-333333333303",
-  "nome": "Gestor Mobilidade Urbana",
-  "email": "gestor@travessia.com.br",
-  "role": "GESTOR",
-  "idPerfil": "11111111-1111-1111-1111-111111111101"
-}
-```
+#### 6.2. CRUD `TB_PERFIL_MOBILIDADE` (`/api/v1/perfis-mobilidade`)
 
----
+- **POST `/api/v1/perfis-mobilidade` (Requer Bearer Token `GESTOR` -> `201 Created`)**
 
-### 6.2. CRUD Tabela 1: `TB_SEMAFORO` (`/api/v1/semaforos`)
-
-#### 1) Criar Semaforo - `POST /api/v1/semaforos` (Requer Bearer Token `GESTOR`)
 **Request Body:**
 ```json
 {
-  "codigoBeacon": "BEACON-IBIRAPUERA-500",
-  "endereco": "Av. Pedro Alvares Cabral, 500 - Vila Mariana, Sao Paulo - SP",
-  "latitude": -23.5874162,
-  "longitude": -46.6576338,
-  "larguraViaM": 16.50,
-  "tempoBaseSeg": 20,
+  "codigo": "GESTANTE",
+  "descricao": "Gestante ou pessoa com crianca de colo",
+  "segExtraSeco": 6,
+  "segExtraChuva": 12
+}
+```
+
+**Response (`201 Created`):**
+```json
+{
+  "idPerfil": "7d5a4af8-6cef-4733-8fdd-e6d52598b189",
+  "codigo": "GESTANTE",
+  "descricao": "Gestante ou pessoa com crianca de colo",
+  "segExtraSeco": 6,
+  "segExtraChuva": 12
+}
+```
+
+- **GET `/api/v1/perfis-mobilidade` e GET `/api/v1/perfis-mobilidade/{id}` (`200 OK`)**
+
+**Response (`200 OK`):**
+```json
+{
+  "idPerfil": "7d5a4af8-6cef-4733-8fdd-e6d52598b189",
+  "codigo": "GESTANTE",
+  "descricao": "Gestante ou pessoa com crianca de colo",
+  "segExtraSeco": 6,
+  "segExtraChuva": 12
+}
+```
+
+- **PUT `/api/v1/perfis-mobilidade/{id}` (Requer Bearer Token `GESTOR` -> `200 OK`)**
+
+**Request Body:**
+```json
+{
+  "codigo": "GESTANTE",
+  "descricao": "Gestante ou pessoa com crianca de colo em travessia prioritaria",
+  "segExtraSeco": 6,
+  "segExtraChuva": 14
+}
+```
+
+**Response (`200 OK`):**
+```json
+{
+  "idPerfil": "7d5a4af8-6cef-4733-8fdd-e6d52598b189",
+  "codigo": "GESTANTE",
+  "descricao": "Gestante ou pessoa com crianca de colo em travessia prioritaria",
+  "segExtraSeco": 6,
+  "segExtraChuva": 14
+}
+```
+
+- **DELETE `/api/v1/perfis-mobilidade/{id}` (Requer Bearer Token `GESTOR` -> `204 No Content`)**
+
+#### 6.3. CRUD `TB_SEMAFORO` (`/api/v1/semaforos`)
+
+- **POST `/api/v1/semaforos` (Requer Bearer Token `GESTOR` -> `201 Created`, gera `INSERT` em `TB_AUDITORIA_SEMAFORO`)**
+
+**Request Body:**
+```json
+{
+  "codigoBeacon": "BEACON-SP-010",
+  "endereco": "Av. Paulista, 1106",
+  "latitude": -23.5641,
+  "longitude": -46.6524,
+  "larguraViaM": 14.0,
+  "tempoBaseSeg": 15,
   "statusOperacional": "ATIVO"
 }
 ```
@@ -126,54 +196,44 @@ O banco de dados relacional implementa fielmente as 5 tabelas do diagrama entida
 **Response (`201 Created`):**
 ```json
 {
-  "idSemaforo": "22222222-2222-2222-2222-222222222204",
-  "codigoBeacon": "BEACON-IBIRAPUERA-500",
-  "endereco": "Av. Pedro Alvares Cabral, 500 - Vila Mariana, Sao Paulo - SP",
-  "latitude": -23.5874162,
-  "longitude": -46.6576338,
-  "larguraViaM": 16.50,
-  "tempoBaseSeg": 20,
+  "idSemaforo": "684c855b-3ddb-4650-bf08-0653703307d9",
+  "codigoBeacon": "BEACON-SP-010",
+  "endereco": "Av. Paulista, 1106",
+  "latitude": -23.5641,
+  "longitude": -46.6524,
+  "larguraViaM": 14.0,
+  "tempoBaseSeg": 15,
   "statusOperacional": "ATIVO"
 }
 ```
 
-#### 2) Listar Semaforos - `GET /api/v1/semaforos`
+- **GET `/api/v1/semaforos` e GET `/api/v1/semaforos/{id}` (`200 OK`)**
+
 **Response (`200 OK`):**
 ```json
-[
-  {
-    "idSemaforo": "22222222-2222-2222-2222-222222222201",
-    "codigoBeacon": "BEACON-SP-001",
-    "endereco": "Av. Paulista, 1106 - Bela Vista, Sao Paulo - SP",
-    "latitude": -23.5641095,
-    "longitude": -46.6524099,
-    "larguraViaM": 18.50,
-    "tempoBaseSeg": 15,
-    "statusOperacional": "ATIVO"
-  },
-  {
-    "idSemaforo": "22222222-2222-2222-2222-222222222204",
-    "codigoBeacon": "BEACON-IBIRAPUERA-500",
-    "endereco": "Av. Pedro Alvares Cabral, 500 - Vila Mariana, Sao Paulo - SP",
-    "latitude": -23.5874162,
-    "longitude": -46.6576338,
-    "larguraViaM": 16.50,
-    "tempoBaseSeg": 20,
-    "statusOperacional": "ATIVO"
-  }
-]
+{
+  "idSemaforo": "684c855b-3ddb-4650-bf08-0653703307d9",
+  "codigoBeacon": "BEACON-SP-010",
+  "endereco": "Av. Paulista, 1106",
+  "latitude": -23.5641,
+  "longitude": -46.6524,
+  "larguraViaM": 14.0,
+  "tempoBaseSeg": 15,
+  "statusOperacional": "ATIVO"
+}
 ```
 
-#### 3) Atualizar Semaforo - `PUT /api/v1/semaforos/22222222-2222-2222-2222-222222222204` (Requer Bearer Token `GESTOR`)
+- **PUT `/api/v1/semaforos/{id}` (Requer Bearer Token `GESTOR` -> `200 OK`, gera `UPDATE` em `TB_AUDITORIA_SEMAFORO`)**
+
 **Request Body:**
 ```json
 {
-  "codigoBeacon": "BEACON-IBIRAPUERA-500",
-  "endereco": "Av. Pedro Alvares Cabral, 500 - Portao 3 Ibirapuera, Sao Paulo - SP",
-  "latitude": -23.5874162,
-  "longitude": -46.6576338,
-  "larguraViaM": 16.50,
-  "tempoBaseSeg": 24,
+  "codigoBeacon": "BEACON-SP-010",
+  "endereco": "Av. Paulista, 1106 - Bela Vista, Sao Paulo - SP",
+  "latitude": -23.5641,
+  "longitude": -46.6524,
+  "larguraViaM": 16.0,
+  "tempoBaseSeg": 20,
   "statusOperacional": "MODO_CHUVA"
 }
 ```
@@ -181,339 +241,174 @@ O banco de dados relacional implementa fielmente as 5 tabelas do diagrama entida
 **Response (`200 OK`):**
 ```json
 {
-  "idSemaforo": "22222222-2222-2222-2222-222222222204",
-  "codigoBeacon": "BEACON-IBIRAPUERA-500",
-  "endereco": "Av. Pedro Alvares Cabral, 500 - Portao 3 Ibirapuera, Sao Paulo - SP",
-  "latitude": -23.5874162,
-  "longitude": -46.6576338,
-  "larguraViaM": 16.50,
-  "tempoBaseSeg": 24,
+  "idSemaforo": "684c855b-3ddb-4650-bf08-0653703307d9",
+  "codigoBeacon": "BEACON-SP-010",
+  "endereco": "Av. Paulista, 1106 - Bela Vista, Sao Paulo - SP",
+  "latitude": -23.5641,
+  "longitude": -46.6524,
+  "larguraViaM": 16.0,
+  "tempoBaseSeg": 20,
   "statusOperacional": "MODO_CHUVA"
 }
 ```
 
-#### 4) Remover Semaforo - `DELETE /api/v1/semaforos/22222222-2222-2222-2222-222222222204` (Requer Bearer Token `GESTOR`)
-**Response:** `204 No Content` (Gera registro automatico de auditoria `DELETE` em `TB_AUDITORIA_SEMAFORO`).
+- **DELETE `/api/v1/semaforos/{id}` (Requer Bearer Token `GESTOR` -> `204 No Content`, preserva `INSERT`/`UPDATE`/`DELETE` em `TB_AUDITORIA_SEMAFORO`)**
 
----
+#### 6.4. CRUD `TB_ACIONAMENTO` (`/api/v1/acionamentos`)
 
-### 6.3. CRUD Tabela 2: `TB_PERFIL_MOBILIDADE` (`/api/v1/perfis-mobilidade`)
-
-#### 1) Criar Perfil de Mobilidade - `POST /api/v1/perfis-mobilidade` (Requer Bearer Token `GESTOR`)
-**Request Body:**
-```json
-{
-  "codigo": "GESTANTE_INFANTIL",
-  "descricao": "Gestantes e responsaveis com carrinho de bebe",
-  "segExtraSeco": 7,
-  "segExtraChuva": 13
-}
-```
-
-**Response (`201 Created`):**
-```json
-{
-  "idPerfil": "11111111-1111-1111-1111-111111111106",
-  "codigo": "GESTANTE_INFANTIL",
-  "descricao": "Gestantes e responsaveis com carrinho de bebe",
-  "segExtraSeco": 7,
-  "segExtraChuva": 13
-}
-```
-
-#### 2) Consultar Perfil por ID - `GET /api/v1/perfis-mobilidade/11111111-1111-1111-1111-111111111106`
-**Response (`200 OK`):**
-```json
-{
-  "idPerfil": "11111111-1111-1111-1111-111111111106",
-  "codigo": "GESTANTE_INFANTIL",
-  "descricao": "Gestantes e responsaveis com carrinho de bebe",
-  "segExtraSeco": 7,
-  "segExtraChuva": 13
-}
-```
-
-#### 3) Atualizar Perfil de Mobilidade - `PUT /api/v1/perfis-mobilidade/11111111-1111-1111-1111-111111111106` (Requer Bearer Token `GESTOR`)
-**Request Body:**
-```json
-{
-  "codigo": "GESTANTE_INFANTIL",
-  "descricao": "Gestantes, lactantes e responsaveis com bebe de colo",
-  "segExtraSeco": 8,
-  "segExtraChuva": 15
-}
-```
-
-**Response (`200 OK`):**
-```json
-{
-  "idPerfil": "11111111-1111-1111-1111-111111111106",
-  "codigo": "GESTANTE_INFANTIL",
-  "descricao": "Gestantes, lactantes e responsaveis com bebe de colo",
-  "segExtraSeco": 8,
-  "segExtraChuva": 15
-}
-```
-
-#### 4) Remover Perfil de Mobilidade - `DELETE /api/v1/perfis-mobilidade/11111111-1111-1111-1111-111111111106` (Requer Bearer Token `GESTOR`)
-**Response:** `204 No Content`
-
----
-
-### 6.4. CRUD Tabela 3: `TB_ACIONAMENTO` (`/api/v1/acionamentos`) com `Idempotency-Key`
-
-#### 1) Solicitar Travessia Inteligente - `POST /api/v1/acionamentos` (Requer Bearer Token `CIDADAO` ou `GESTOR`)
-**Headers:**
-- `Authorization: Bearer <token>` (o `id_usuario` e extraido automaticamente das claims do token JWT)
-- `Idempotency-Key: cloud-prod-travessia-2026-001` (opcional no Swagger UI; quando enviado, garante idempotencia `X-Idempotent-Replayed: true`)
+- **POST `/api/v1/acionamentos` (Requer Bearer Token `CIDADAO` ou `GESTOR` + header opcional `Idempotency-Key` -> `201 Created` ou `200 OK` com `X-Idempotent-Replayed: true`)**
 
 **Request Body:**
 ```json
 {
   "codigoBeacon": "BEACON-SP-001",
-  "distanciaSensorM": 3.50,
-  "condicaoClima": "CHUVA_MODERADA",
-  "intensidadeChuvaMm": 12.50
+  "distanciaSensorM": 1.5,
+  "condicaoClima": "TEMPESTADE",
+  "intensidadeChuvaMm": 25.0
 }
 ```
 
-**Response (`201 Created` na 1a chamada com `X-Idempotent-Replayed: false` / `200 OK` com `X-Idempotent-Replayed: true` em chamadas subsequentes):**
+**Response (`201 Created` na 1a chamada / `200 OK` no replay idempotente):**
 ```json
 {
-  "idAcionamento": "44444444-4444-4444-4444-444444444401",
-  "idUsuario": "33333333-3333-3333-3333-333333333302",
+  "idAcionamento": "d663b7b0-edc9-4a74-b45f-85fe43968195",
+  "idUsuario": "f2eab64b-3b55-4b5c-9a9d-59d40020b2f8",
   "idSemaforo": "22222222-2222-2222-2222-222222222201",
-  "chaveIdempotencia": "cloud-prod-travessia-2026-001",
-  "dtHora": "2026-11-11T18:58:17.0514376Z",
-  "distanciaSensorM": 1.80,
-  "condicaoClima": "CHUVA_MODERADA",
-  "intensidadeChuvaMm": 14.50,
-  "tempoExtraSeg": 22,
-  "tempoBaseSeg": 16,
-  "tempoTotalSeg": 38,
-  "justificativaIa": "TravessIA Decision Engine: Perfil=IDOSO (+12s) | Clima=CHUVA_MODERADA (14.50mm) | LarguraVia=18.50m (+10s) | BonusTempestade=+0s | TempoBase=16s | TempoExtraConcedido=22s | TempoTotalTravessia=38s."
+  "chaveIdempotencia": "idem-rain-1794430182",
+  "dtHora": "2026-11-11T20:51:17.2725172Z",
+  "distanciaSensorM": 1.5,
+  "condicaoClima": "TEMPESTADE",
+  "intensidadeChuvaMm": 25.0,
+  "tempoExtraSeg": 30,
+  "tempoBaseSeg": 15,
+  "tempoTotalSeg": 45,
+  "justificativaIa": "TravessIA Decision Engine: Perfil=CADEIRANTE (+15s) | Clima=TEMPESTADE (25.00mm) | LarguraVia=18.50m (+10s) | BonusTempestade=+5s | TempoBase=15s | TempoExtraConcedido=30s | TempoTotalTravessia=45s."
 }
 ```
 
-#### 2) Listar Acionamentos - `GET /api/v1/acionamentos` (Requer Bearer Token)
-**Response (`200 OK`):**
-```json
-[
-  {
-    "idAcionamento": "44444444-4444-4444-4444-444444444401",
-    "idUsuario": "33333333-3333-3333-3333-333333333302",
-    "idSemaforo": "22222222-2222-2222-2222-222222222201",
-    "chaveIdempotencia": "cloud-prod-travessia-2026-001",
-    "dtHora": "2026-11-11T18:58:17.0514376Z",
-    "distanciaSensorM": 1.80,
-    "condicaoClima": "CHUVA_MODERADA",
-    "intensidadeChuvaMm": 14.50,
-    "tempoExtraSeg": 22,
-    "tempoBaseSeg": 16,
-    "tempoTotalSeg": 38,
-    "justificativaIa": "TravessIA Decision Engine: Perfil=IDOSO (+12s) | Clima=CHUVA_MODERADA (14.50mm) | LarguraVia=18.50m (+10s) | BonusTempestade=+0s | TempoBase=16s | TempoExtraConcedido=22s | TempoTotalTravessia=38s."
-  }
-]
-```
+- **GET `/api/v1/acionamentos` e GET `/api/v1/acionamentos/{id}` (Requer Bearer Token `CIDADAO` ou `GESTOR` -> `200 OK`)**
 
-#### 3) Consultar Acionamento por ID - `GET /api/v1/acionamentos/44444444-4444-4444-4444-444444444401` (Requer Bearer Token)
-**Response (`200 OK`):**
-```json
-{
-  "idAcionamento": "44444444-4444-4444-4444-444444444401",
-  "idUsuario": "33333333-3333-3333-3333-333333333302",
-  "idSemaforo": "22222222-2222-2222-2222-222222222201",
-  "chaveIdempotencia": "cloud-prod-travessia-2026-001",
-  "dtHora": "2026-11-11T18:58:17.0514376Z",
-  "distanciaSensorM": 1.80,
-  "condicaoClima": "CHUVA_MODERADA",
-  "intensidadeChuvaMm": 14.50,
-  "tempoExtraSeg": 22,
-  "tempoBaseSeg": 16,
-  "tempoTotalSeg": 38,
-  "justificativaIa": "TravessIA Decision Engine: Perfil=IDOSO (+12s) | Clima=CHUVA_MODERADA (14.50mm) | LarguraVia=18.50m (+10s) | BonusTempestade=+0s | TempoBase=16s | TempoExtraConcedido=22s | TempoTotalTravessia=38s."
-}
-```
+- **PUT `/api/v1/acionamentos/{id}` (Requer Bearer Token `CIDADAO` ou `GESTOR` -> `200 OK`)**
 
-#### 4) Remover Acionamento - `DELETE /api/v1/acionamentos/44444444-4444-4444-4444-444444444401` (Requer Bearer Token `GESTOR`)
-**Response:** `204 No Content`
-
----
-
-### 6.5. Consulta Tabela 5: `TB_AUDITORIA_SEMAFORO` (`/api/v1/auditorias`)
-
-#### Listar Registros de Auditoria - `GET /api/v1/auditorias` (Requer Bearer Token `GESTOR`)
-**Response (`200 OK`):**
-```json
-[
-  {
-    "idAuditoria": "55555555-5555-5555-5555-555555555501",
-    "idSemaforo": "22222222-2222-2222-2222-222222222201",
-    "operacao": "UPDATE",
-    "campoAlterado": "tempo_base_seg",
-    "valorAntigo": "15",
-    "valorNovo": "16",
-    "usuarioBd": "gestor@travessia.sp.gov.br",
-    "dtOperacao": "2026-11-11T18:58:16.8976937Z"
-  }
-]
-```
-
----
-
-### 6.6. CRUD Tabela 4: `TB_USUARIO` (`/api/v1/usuarios`)
-
-#### 1) Cadastrar Cidadao - `POST /api/v1/auth/register`
-**Request Body (sem necessidade de informar GUID; `id_perfil` resolvido automaticamente por `codigoPerfil` ou idade >= 60 anos):**
-```json
-{
-  "nome": "Maria Aparecida",
-  "email": "maria.cidada@travessia.com.br",
-  "senha": "TravessIA@2026",
-  "role": "CIDADAO",
-  "anoNascimento": 1952,
-  "codigoPerfil": "IDOSO",
-  "consentimentoLgpd": "S"
-}
-```
-
-**Response (`201 Created`):**
-```json
-{
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expiresAtUtc": "2026-11-11T21:30:00Z",
-  "idUsuario": "33333333-3333-3333-3333-333333333304",
-  "nome": "Maria Aparecida",
-  "email": "maria.cidada@travessia.com.br",
-  "role": "CIDADAO",
-  "idPerfil": "11111111-1111-1111-1111-111111111102"
-}
-```
-
-#### 2) Consultar Usuario por ID - `GET /api/v1/usuarios/33333333-3333-3333-3333-333333333304` (Requer Bearer Token)
-**Response (`200 OK` - sem exposicao de `senha_hash`):**
-```json
-{
-  "idUsuario": "33333333-3333-3333-3333-333333333304",
-  "idPerfil": "11111111-1111-1111-1111-111111111102",
-  "codigoPerfil": "IDOSO",
-  "nome": "Maria Aparecida",
-  "email": "maria.cidada@travessia.com.br",
-  "role": "CIDADAO",
-  "anoNascimento": 1952,
-  "consentimentoLgpd": "S",
-  "dtCadastro": "2026-11-11T19:30:00Z"
-}
-```
-
-#### 3) Atualizar Usuario - `PUT /api/v1/usuarios/33333333-3333-3333-3333-333333333304` (Requer Bearer Token)
 **Request Body:**
 ```json
 {
-  "nome": "Maria Aparecida Cadeirante",
-  "email": "maria.cidada@travessia.com.br",
-  "role": "CIDADAO",
-  "anoNascimento": 1952,
-  "codigoPerfil": "CADEIRANTE",
-  "consentimentoLgpd": "S"
+  "codigoBeacon": "BEACON-SP-001",
+  "distanciaSensorM": 2.2,
+  "condicaoClima": "CHUVA_MODERADA",
+  "intensidadeChuvaMm": 14.5
 }
 ```
 
 **Response (`200 OK`):**
 ```json
 {
-  "idUsuario": "33333333-3333-3333-3333-333333333304",
-  "idPerfil": "11111111-1111-1111-1111-111111111103",
-  "codigoPerfil": "CADEIRANTE",
-  "nome": "Maria Aparecida Cadeirante",
-  "email": "maria.cidada@travessia.com.br",
-  "role": "CIDADAO",
-  "anoNascimento": 1952,
-  "consentimentoLgpd": "S",
-  "dtCadastro": "2026-11-11T19:30:00Z"
+  "idAcionamento": "4c2d2ce8-31eb-498f-bf98-5d10a3e0ae69",
+  "idUsuario": "f2eab64b-3b55-4b5c-9a9d-59d40020b2f8",
+  "idSemaforo": "22222222-2222-2222-2222-222222222201",
+  "chaveIdempotencia": "idem-dry-1794430182",
+  "dtHora": "2026-11-11T20:51:16.990005Z",
+  "distanciaSensorM": 2.2,
+  "condicaoClima": "CHUVA_MODERADA",
+  "intensidadeChuvaMm": 14.5,
+  "tempoExtraSeg": 25,
+  "tempoBaseSeg": 15,
+  "tempoTotalSeg": 40,
+  "justificativaIa": "TravessIA Decision Engine: Perfil=CADEIRANTE (+15s) | Clima=CHUVA_MODERADA (14.50mm) | LarguraVia=18.50m (+10s) | BonusTempestade=+0s | TempoBase=15s | TempoExtraConcedido=25s | TempoTotalTravessia=40s."
 }
 ```
 
-#### 4) Remover Usuario - `DELETE /api/v1/usuarios/33333333-3333-3333-3333-333333333304` (Requer Bearer Token `GESTOR`)
-**Response:** `204 No Content`
+- **DELETE `/api/v1/acionamentos/{id}` (Requer Bearer Token `GESTOR` -> `204 No Content`)**
 
 ---
 
-### 6.7. Monitoramento de Saude (`GET /health`)
+## 7. Variaveis de Ambiente Protegidas e Azure Key Vault (DevSecOps)
 
-#### Consultar Saude da API, Banco de Dados e Servicos Externos - `GET /health`
-**Response (`200 OK`):**
-```json
-{
-  "status": "Healthy",
-  "service": "TravessIA.API",
-  "duration": "00:00:00.0036382",
-  "checks": [
-    {
-      "name": "api-self",
-      "status": "Healthy",
-      "description": "TravessIA Minimal API runtime operacional e responsivo.",
-      "duration": "00:00:00.0000057",
-      "error": null
-    },
-    {
-      "name": "database",
-      "status": "Healthy",
-      "description": null,
-      "duration": "00:00:00.0033253",
-      "error": null
-    },
-    {
-      "name": "external-weather-and-keyvault",
-      "status": "Healthy",
-      "description": "Motor de telemetria climatica/IA operacional e Azure Key Vault conectado (https://kv-travessia-564361.vault.azure.net/).",
-      "duration": "00:00:00.0000278",
-      "error": null
-    }
-  ]
-}
+| Variavel / Segredo | Onde e Configurada | Funcao e Governanca de Seguranca |
+|---|---|---|
+| `KEYVAULT_URI` | App Settings do Web App e Pipeline CD | Endereco do cofre `https://kv-travessia-564361.vault.azure.net/` lido pelo `Program.cs` via `AddAzureKeyVault(..., new DefaultAzureCredential())` |
+| `ConnectionStrings--DefaultConnection` | Segredo no Azure Key Vault (`kv-travessia-564361`) | String de conexao TLS ao Azure SQL Server `sql-travessia-rm564361.database.windows.net` (`sqldb-travessia`), nunca versionada no Git |
+| `JwtSettings--SecretKey` | Segredo no Azure Key Vault (`kv-travessia-564361`) | Chave simetrica HMAC-SHA256 para assinatura e validacao dos tokens JWT Bearer (`Issuer: TravessIA`, `Audience: TravessIA.API`) |
+| `ASPNETCORE_ENVIRONMENT` | App Settings do Web App (`Production`) | Controla comportamento de producao mantendo Swagger UI e `/health` ativos para avaliacao e monitoramento |
+| **Managed Identity RBAC** | `webapp-travessia-rm564361` -> `kv-travessia-564361` | Identidade gerenciada atribuida ao sistema com papel **`Key Vault Secrets User`** para leitura sem credenciais estaticas |
+
+---
+
+## 9. Estrutura de Diretorios do Repositorio
+
+```text
+TravessIA/
+├── .dockerignore
+├── .editorconfig
+├── .gitignore
+├── azure-pipeline.yml
+├── global.json
+├── README.md
+├── TravessIA.sln
+├── dockerfiles/
+│   └── Dockerfile
+├── docs/
+│   └── arquitetura-travessia.png
+│   
+├── scripts/
+│   ├── provision-azure.sh
+│   └── script-bd.sql
+├── TravessIA.Domain/
+│   ├── Entities/
+│   │   ├── Acionamento.cs
+│   │   ├── AuditoriaSemaforo.cs
+│   │   ├── PerfilMobilidade.cs
+│   │   ├── Semaforo.cs
+│   │   └── Usuario.cs
+│   ├── Exceptions/
+│   │   └── DomainException.cs
+│   ├── Helpers/
+│   │   └── HashHelper.cs
+│   └── TravessIA.Domain.csproj
+├── TravessIA.Application/
+│   ├── Auth/
+│   │   └── JwtTokenIssuer.cs
+│   ├── DTOs/
+│   │   ├── Acionamentos/
+│   │   ├── Auditorias/
+│   │   ├── Auth/
+│   │   ├── PerfisMobilidade/
+│   │   ├── Semaforos/
+│   │   └── Usuarios/
+│   ├── Repositories/
+│   ├── Services/
+│   │   ├── Implementations/
+│   │   └── Interfaces/
+│   └── TravessIA.Application.csproj
+├── TravessIA.Infrastructure/
+│   ├── Persistence/
+│   │   ├── Configurations/
+│   │   ├── Repositories/
+│   │   ├── TravessIAContext.cs
+│   │   └── TravessIASeeder.cs
+│   └── TravessIA.Infrastructure.csproj
+├── TravessIA.API/
+│   ├── Endpoints/
+│   ├── Exceptions/
+│   ├── Extensions/
+│   ├── Health/
+│   ├── Program.cs
+│   ├── TravessIA.API.csproj
+│   ├── appsettings.Development.json
+│   └── appsettings.json
+└── TravessIA.Tests/
+    ├── Integration/
+    │   └── TravessIAIntegrationTests.cs
+    ├── Unit/
+    │   └── CrosswalkDomainTests.cs
+    └── TravessIA.Tests.csproj
 ```
 
 ---
 
-## 7. Como Executar Localmente e no Docker
+## 10. Declaracao de Uso de Inteligencia Artificial Generativa
 
-### Pre-requisitos
-- .NET SDK 10.0 (`10.0.100` ou superior)
-- Docker Desktop (opcional, para execucao conteinerizada)
+Em conformidade com as diretrizes academicas da FIAP para a Global Solution 2026/2, declaramos que ferramentas de Inteligencia Artificial Generativa foram utilizadas como assistentes de apoio tecnico durante o desenvolvimento e a documentacao deste projeto nas seguintes frentes:
 
-### Passos para Execucao Local
-1. Clone o repositorio e acesse a pasta raiz:
-   ```bash
-   git clone https://github.com/JoaoHBatistaLeal/TravessIA.git
-   cd TravessIA
-   ```
-2. Restaure os pacotes e compile a solucao:
-   ```bash
-   dotnet restore TravessIA.sln
-   dotnet build TravessIA.sln --configuration Release
-   ```
-3. Execute a suite completa de testes automatizados (Unitarios + Integracao `xUnit`):
-   ```bash
-   dotnet test TravessIA.sln --configuration Release
-   ```
-4. Inicie a API:
-   ```bash
-   dotnet run --project TravessIA.API/TravessIA.API.csproj
-   ```
-5. Acesse o Swagger UI em `http://localhost:5000/swagger` e o Health Check em `http://localhost:5000/health`.
-
-### Execucao via Docker (`/dockerfiles/Dockerfile`)
-```bash
-docker build -f dockerfiles/Dockerfile -t travessia-api:latest .
-docker run -d -p 8080:8080 -e ASPNETCORE_ENVIRONMENT=Production travessia-api:latest
-```
-
----
-
-## 8. Declaracao Obrigatoria de Uso de Inteligencia Artificial Generativa
-
-Em conformidade com as diretrizes academicas da FIAP para a Global Solution 2026/2, declaramos que ferramentas de Inteligencia Artificial Generativa foram utilizadas como assistentes de apoio durante o desenvolvimento deste projeto nas seguintes frentes:
-1. **Revisao e Estruturacao de Codigo**: Apoio na refatoracao de camadas Clean Architecture (`Domain`, `Application`, `Infrastructure`, `API`), mapeamento Fluent API do Entity Framework Core e padronizacao de descricoes OpenAPI/Swagger.
-2. **Automacao de Testes e Infraestrutura como Codigo (IaC)**: Auxilio na elaboracao de cenarios de teste `xUnit` (`WebApplicationFactory<Program>`) e scripts de provisionamento Azure CLI (`scripts/provision-azure.sh`) e pipeline YAML (`azure-pipeline.yml`).
-3. **Supervisao e Validacao Humana**: Todas as regras de negocio de travessia inteligente, modelagem relacional das 5 tabelas (`script-bd.sql`), configuracoes de seguranca com Azure Key Vault (`DefaultAzureCredential`) e validacoes em nuvem foram integralmente revisadas, testadas e auditadas pelos integrantes do grupo, que assumem total responsabilidade tecnica e autoral pela solucao entregue.
+1. **Estruturacao de Codigo e Arquitetura**: Apoio na organizacao da Clean Architecture em `.NET 10.0`, configuracao das Minimal APIs, Fluent API do Entity Framework Core e padronizacao dos descritores OpenAPI/Swagger.
+2. **Revisao e Validacao Humana Integral**: Todas as regras de negocio de travessia inteligente, politicas de branch no Azure Repos (`master`), configuracoes de seguranca no Azure Key Vault (`DefaultAzureCredential`), execucoes de pipeline e testes em nuvem foram integralmente inspecionados, executados e validados pelos integrantes do grupo, que assumem total responsabilidade autoral e tecnica pela entrega.

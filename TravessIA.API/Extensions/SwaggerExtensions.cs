@@ -20,7 +20,7 @@ public static class SwaggerExtensions
         {
             options.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "TravessIA API Oficial para Vídeo",
+                Title = "TravessIA API Oficial para Vídeo Segunda Tentativa",
                 Version = "v1",
                 Description = "Documentação de Endpoints da API da TravessIA."
             });

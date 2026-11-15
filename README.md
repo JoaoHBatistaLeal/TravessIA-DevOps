@@ -25,7 +25,7 @@ Gustavo Arthur Carvalho Sartori - RM 561650
 | **Projeto no Azure DevOps** | `https://dev.azure.com/OrgJJEGG/TravessIA` |
 | **Repositorio GitHub DevOps — Branch `master`** | `https://github.com/JoaoHBatistaLeal/TravessIA-DevOps` |
 | **Repositorio GitHub .NET — Branch `main`** | `https://github.com/JoaoHBatistaLeal/TravessIA` |
-| **Video de Demonstracao no YouTube** | `https://youtu.be/<url>` |
+| **Video de Demonstracao no YouTube** | `https://youtu.be/8oNwywFnKTw` |
 
 ---
 
